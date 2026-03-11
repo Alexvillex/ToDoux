@@ -19,11 +19,14 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: 🛠️ Install Web Tools
+        run: npx expo install react-native-web react-dom @expo/webpack-config -- --legacy-peer-deps
+
       - name: 🏗️ Build Web
         run: npx expo export:web
 
       - name: 🚀 Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: web-build # Expo exporte par défaut dans 'web-build'
+          folder: web-build
           branch: gh-pages
