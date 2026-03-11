@@ -1,25 +1,29 @@
-name: ToDoux CI
+name: ToDoux CI/CD
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 📥 Récupération du code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🟢 Installation de Node.js
+      - name: 🟢 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: 📦 Installation des dépendances
+      - name: 📦 Install dependencies
         run: npm install --legacy-peer-deps
+
+      - name: 🏗️ Build Web
+        run: npx expo export:web
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: web-build # Expo exporte par défaut dans 'web-build'
+          branch: gh-pages
