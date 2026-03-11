@@ -1,0 +1,8 @@
+{
+  "display": "standalone",
+  "lang": "en",
+  "name": "ListeTODOUX",
+  "short_name": "ListeTODOUX",
+  "start_url": "/?utm_source=web_app_manifest",
+  "orientation": "portrait"
+}
