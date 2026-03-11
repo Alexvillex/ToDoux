@@ -22,7 +22,9 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "bundler": "webpack",
       "output": "static",
+      "baseUrl": "/ToDoux",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
