@@ -209,7 +209,12 @@ export default function HomeScreen({ user }) {
                                             <Text style={[styles.taskTitle, item.completed && styles.completedText]}>{item.title}</Text>
                                             {item.deadlineDate && (
                                                 <Text style={[styles.dateText, overdue && { color: '#FF3B30' }]}>
-                                                    {overdue ? "EN RETARD" : "Limite"} : {new Date(item.deadlineDate).toLocaleDateString()}
+                                                    {overdue ? "⚠ EN RETARD" : "📅 Limite"} : {new Date(item.deadlineDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                                </Text>
+                                            )}
+                                            {item.reminderDate && !item.completed && (
+                                                <Text style={styles.reminderText}>
+                                                    🔔 Rappel : {new Date(item.reminderDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                                                 </Text>
                                             )}
                                         </View>
@@ -440,4 +445,5 @@ const styles = StyleSheet.create({
     subTaskCheckbox: { width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: '#C7C7CC', marginRight: 8 },
     subTaskCheckboxDone: { backgroundColor: '#34C759', borderColor: '#34C759' },
     subTaskText: { fontSize: 14, color: '#3A3A3C', flex: 1 },
+    reminderText: { fontSize: 11, marginTop: 2, color: '#007AFF' },
 });
