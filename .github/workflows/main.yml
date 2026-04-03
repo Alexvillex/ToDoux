@@ -26,7 +26,7 @@ jobs:
         run: npx expo install react-native-web react-dom @expo/webpack-config -- --legacy-peer-deps
 
       - name: 🏗️ Build Web
-        run: npx expo export:web
+        run: PUBLIC_URL=/ToDoux/ npx expo export:web
 
       - name: 🚀 Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
