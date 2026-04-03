@@ -222,6 +222,22 @@ export default function HomeScreen({ user }) {
                                     <Text style={{ color: '#FF3B30', fontWeight: 'bold' }}>✕</Text>
                                 </TouchableOpacity>
                             </View>
+                            {linkedSubs.length > 0 && (
+                                <View style={styles.subTaskList}>
+                                    {linkedSubs.map(sub => (
+                                        <TouchableOpacity
+                                            key={sub.id}
+                                            style={styles.subTaskRow2}
+                                            onPress={() => updateStatus('subtask', sub.id, sub.completed)}
+                                        >
+                                            <View style={[styles.subTaskCheckbox, sub.completed && styles.subTaskCheckboxDone]} />
+                                            <Text style={[styles.subTaskText, sub.completed && styles.completedText]}>
+                                                {sub.title}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            )}
                         </View>
                     );
                 })}
@@ -418,5 +434,10 @@ const styles = StyleSheet.create({
     dateText: { fontSize: 11, marginTop: 2, color: '#8E8E93' },
     ratioText: { fontSize: 11, fontWeight: 'bold', color: '#8E8E93' },
     deleteBtn: { padding: 10, marginLeft: 10 },
-    completedText: { textDecorationLine: 'line-through', color: '#AEAEB2' }
+    completedText: { textDecorationLine: 'line-through', color: '#AEAEB2' },
+    subTaskList: { marginTop: 8, paddingLeft: 12 },
+    subTaskRow2: { flexDirection: 'row', alignItems: 'center', paddingVertical: 5 },
+    subTaskCheckbox: { width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: '#C7C7CC', marginRight: 8 },
+    subTaskCheckboxDone: { backgroundColor: '#34C759', borderColor: '#34C759' },
+    subTaskText: { fontSize: 14, color: '#3A3A3C', flex: 1 },
 });
