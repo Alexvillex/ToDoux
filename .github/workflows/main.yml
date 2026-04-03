@@ -27,6 +27,17 @@ jobs:
 
       - name: 🏗️ Build Web
         run: npx expo export:web
+        env:
+          PUBLIC_URL: /ToDoux/
+
+      - name: 🔧 Fix chemins pour GitHub Pages
+        run: |
+          sed -i 's|src="/static/|src="/ToDoux/static/|g' web-build/index.html
+          sed -i 's|href="/manifest|href="/ToDoux/manifest|g' web-build/index.html
+          sed -i 's|href="/favicon|href="/ToDoux/favicon|g' web-build/index.html
+          sed -i 's|href="/pwa/|href="/ToDoux/pwa/|g' web-build/index.html
+          echo "=== index.html après correction ==="
+          cat web-build/index.html
 
       - name: 📄 Ajouter .nojekyll
         run: touch web-build/.nojekyll
