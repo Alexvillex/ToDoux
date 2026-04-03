@@ -57,7 +57,20 @@ export const registerForPushNotificationsAsync = async () => {
 };
 
 /**
+ * Annule une notification programmée via son identifiant.
+ */
+export const cancelNotification = async (notificationId) => {
+    if (Platform.OS === 'web' || !notification || !notificationId) return;
+    try {
+        await notification.cancelScheduledNotificationAsync(notificationId);
+    } catch (error) {
+        console.error("Erreur annulation notification :", error);
+    }
+};
+
+/**
  * Programme une notification locale à une date précise.
+ * Retourne l'identifiant de la notification (utile pour l'annuler plus tard).
  */
 export const schedulePushNotification = async (title, date) => {
     if (Platform.OS === 'web' || !notification) {

@@ -5,9 +5,9 @@ import { collection, query, where, onSnapshot, or } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { createFullTask, deleteFullTask, updateStatus } from '../src/service/taskService';
+import { createFullTask, deleteFullTask, updateStatus, saveNotificationId } from '../src/service/taskService';
 import { MOSCOW_CONFIG } from '../src/constants/moscow';
-import { schedulePushNotification, registerForPushNotificationsAsync } from '../src/service/NotificationService';
+import { schedulePushNotification, cancelNotification, registerForPushNotificationsAsync } from '../src/service/NotificationService';
 
 const webInputStyle = {
     borderWidth: 1, borderColor: '#D1D1D6', backgroundColor: '#fff',
@@ -34,7 +34,17 @@ export default function HomeScreen({ user }) {
     const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
-        registerForPushNotificationsAsync();
+        if (Platform.OS !== 'web') {
+            registerForPushNotificationsAsync().then((status) => {
+                if (status === null) {
+                    Alert.alert(
+                        "Notifications désactivées",
+                        "Activez les notifications dans les réglages pour recevoir vos rappels.",
+                        [{ text: "OK" }]
+                    );
+                }
+            });
+        }
 
         const q = query(
             collection(db, "tasks"),
@@ -90,7 +100,12 @@ export default function HomeScreen({ user }) {
             const result = await createFullTask(taskData, tempSubTasks);
             if (result.success) {
                 if (reminder && reminderDate) {
-                    await schedulePushNotification(title, reminderDate);
+                    const notifId = await schedulePushNotification(title, reminderDate);
+                    if (notifId) {
+                        await saveNotificationId(result.taskId, notifId);
+                    } else if (Platform.OS !== 'web') {
+                        Alert.alert("Rappel non programmé", "La date est déjà passée ou les notifications sont désactivées.");
+                    }
                 }
                 resetForm();
             } else {
@@ -105,6 +120,11 @@ export default function HomeScreen({ user }) {
     };
 
     const handleDelete = async (taskId) => {
+        // Annule la notification programmée si elle existe
+        const taskToDelete = tasks.find(t => t.id === taskId);
+        if (taskToDelete?.notificationId) {
+            await cancelNotification(taskToDelete.notificationId);
+        }
         const result = await deleteFullTask(taskId, allSubTasks);
         if (!result.success) {
             Alert.alert("Action refusée", "Vous n'avez pas les permissions pour supprimer cette tâche.");

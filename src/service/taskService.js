@@ -45,10 +45,22 @@ export const createFullTask = async (taskData, subTasks) => {
                 completed: false
             });
         }
-        return { success: true };
-    } catch (e) { 
+        return { success: true, taskId: taskDoc.id };
+    } catch (e) {
         console.error("Erreur création tâche :", e);
-        return { success: false, error: e }; 
+        return { success: false, error: e };
+    }
+};
+
+/**
+ * --- NOTIFICATION ---
+ * Sauvegarde l'identifiant de notification dans la tâche (pour pouvoir l'annuler)
+ */
+export const saveNotificationId = async (taskId, notificationId) => {
+    try {
+        await updateDoc(doc(db, "tasks", taskId), { notificationId });
+    } catch (e) {
+        console.error("Erreur sauvegarde notificationId :", e);
     }
 };
 
