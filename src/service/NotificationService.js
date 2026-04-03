@@ -88,11 +88,11 @@ export const schedulePushNotification = async (title, date) => {
     try {
         return await notification.scheduleNotificationAsync({
             content: {
-                title: "Todoux : Rappel 🦾",
+                title: "Todoux : Rappel",
                 body: `C'est l'heure de : ${title}`,
                 sound: true,
             },
-            trigger: trigger,
+            trigger: { date: trigger },
         });
     } catch (error) {
         console.error("Erreur lors de la programmation de la notification :", error);

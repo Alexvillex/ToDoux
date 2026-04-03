@@ -27,6 +27,8 @@ export default function HomeScreen({ user }) {
     const [inviteEmail, setInviteEmail] = useState('');
     const [showReminderPicker, setShowReminderPicker] = useState(false);
     const [showLimitePicker, setShowLimitePicker] = useState(false);
+    const [reminderPickerStep, setReminderPickerStep] = useState('date');
+    const [limitePickerStep, setLimitePickerStep] = useState('date');
     const [subTaskInput, setSubTaskInput] = useState('');
     const [tempSubTasks, setTempSubTasks] = useState([]);
     const [tasks, setTasks] = useState([]);
@@ -77,6 +79,56 @@ export default function HomeScreen({ user }) {
         if (subTaskInput.trim()) {
             setTempSubTasks([...tempSubTasks, subTaskInput.trim()]);
             setSubTaskInput('');
+        }
+    };
+
+    const handleReminderChange = (event, selected) => {
+        if (!selected || event.type === 'dismissed') {
+            setShowReminderPicker(false);
+            setReminderPickerStep('date');
+            return;
+        }
+        if (Platform.OS === 'android') {
+            if (reminderPickerStep === 'date') {
+                const updated = new Date(reminderDate);
+                updated.setFullYear(selected.getFullYear(), selected.getMonth(), selected.getDate());
+                setReminderDate(updated);
+                setReminderPickerStep('time');
+            } else {
+                const updated = new Date(reminderDate);
+                updated.setHours(selected.getHours(), selected.getMinutes());
+                setReminderDate(updated);
+                setShowReminderPicker(false);
+                setReminderPickerStep('date');
+            }
+        } else {
+            setReminderDate(selected);
+            setShowReminderPicker(false);
+        }
+    };
+
+    const handleLimiteChange = (event, selected) => {
+        if (!selected || event.type === 'dismissed') {
+            setShowLimitePicker(false);
+            setLimitePickerStep('date');
+            return;
+        }
+        if (Platform.OS === 'android') {
+            if (limitePickerStep === 'date') {
+                const updated = new Date(limiteDate);
+                updated.setFullYear(selected.getFullYear(), selected.getMonth(), selected.getDate());
+                setLimiteDate(updated);
+                setLimitePickerStep('time');
+            } else {
+                const updated = new Date(limiteDate);
+                updated.setHours(selected.getHours(), selected.getMinutes());
+                setLimiteDate(updated);
+                setShowLimitePicker(false);
+                setLimitePickerStep('date');
+            }
+        } else {
+            setLimiteDate(selected);
+            setShowLimitePicker(false);
         }
     };
 
@@ -278,8 +330,8 @@ export default function HomeScreen({ user }) {
                             {showReminderPicker && (
                                 <DateTimePicker
                                     value={reminderDate}
-                                    mode="datetime"
-                                    onChange={(e, d) => { setShowReminderPicker(false); if (d) setReminderDate(d); }}
+                                    mode={Platform.OS === 'android' ? reminderPickerStep : 'datetime'}
+                                    onChange={handleReminderChange}
                                 />
                             )}
                         </View>
@@ -303,8 +355,8 @@ export default function HomeScreen({ user }) {
                             {showLimitePicker && (
                                 <DateTimePicker
                                     value={limiteDate}
-                                    mode="date"
-                                    onChange={(e, d) => { setShowLimitePicker(false); if (d) setLimiteDate(d); }}
+                                    mode={Platform.OS === 'android' ? limitePickerStep : 'datetime'}
+                                    onChange={handleLimiteChange}
                                 />
                             )}
                         </View>
